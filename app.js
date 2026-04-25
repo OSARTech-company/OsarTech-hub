@@ -25,6 +25,10 @@ const state = {
   language: "python",
   drafts: loadDrafts(),
   pyodideReadyPromise: null,
+  isRunning: false,
+  loadingTimerId: null,
+  pyodideWarmStarted: false,
+  pyodideReady: false,
 };
 
 function loadDrafts() {
@@ -43,6 +47,28 @@ function loadDrafts() {
 
 function saveDrafts() {
   localStorage.setItem(storageKey, JSON.stringify(state.drafts));
+}
+
+function setRunningState(isRunning, label = "Loading...") {
+  state.isRunning = isRunning;
+  elements.runBtn.disabled = isRunning;
+  elements.resetBtn.disabled = isRunning;
+
+  if (state.loadingTimerId) {
+    clearInterval(state.loadingTimerId);
+    state.loadingTimerId = null;
+  }
+
+  if (isRunning) {
+    let dots = 0;
+    elements.runBtn.textContent = label;
+    state.loadingTimerId = setInterval(() => {
+      dots = (dots + 1) % 4;
+      elements.runBtn.textContent = `${label}${".".repeat(dots)}`;
+    }, 320);
+  } else {
+    elements.runBtn.textContent = "Run";
+  }
 }
 
 function activateLanguage(language) {
@@ -85,11 +111,31 @@ function ensurePyodide() {
   return state.pyodideReadyPromise;
 }
 
+function warmPythonRuntime() {
+  if (state.pyodideWarmStarted || state.pyodideReady) {
+    return;
+  }
+  state.pyodideWarmStarted = true;
+
+  ensurePyodide()
+    .then(() => {
+      state.pyodideReady = true;
+      if (state.language === "python" && !state.isRunning) {
+        elements.runtimeStatus.textContent = "Python ready";
+      }
+    })
+    .catch(() => {
+      // Keep silent here. The run flow already shows actionable errors.
+    });
+}
+
 async function runPython(code) {
-  elements.runtimeStatus.textContent = "Running Python...";
+  setRunningState(true, "Loading...");
+  elements.runtimeStatus.textContent = state.pyodideReady ? "Running Python..." : "Loading Python engine (first run can take time)...";
   elements.textOutput.textContent = "Running...";
   try {
     const pyodide = await ensurePyodide();
+    state.pyodideReady = true;
     const output = [];
 
     pyodide.setStdout({
@@ -110,6 +156,8 @@ async function runPython(code) {
   } catch (error) {
     elements.textOutput.textContent = `Error: ${error.message}`;
     elements.runtimeStatus.textContent = "Python error";
+  } finally {
+    setRunningState(false);
   }
 }
 
@@ -171,6 +219,11 @@ function buildWebPreviewDocument(options = {}) {
 }
 
 async function runCurrentLanguage() {
+  if (state.isRunning) {
+    return;
+  }
+
+  setRunningState(true, "Loading...");
   const code = elements.editor.value;
   state.drafts[state.language] = code;
   saveDrafts();
@@ -181,16 +234,22 @@ async function runCurrentLanguage() {
   }
 
   if (state.language === "html") {
+    elements.runtimeStatus.textContent = "Rendering preview...";
     elements.previewFrame.srcdoc = buildWebPreviewDocument({ runJs: false });
+    setRunningState(false);
     return;
   }
 
   if (state.language === "css") {
+    elements.runtimeStatus.textContent = "Rendering preview...";
     elements.previewFrame.srcdoc = buildWebPreviewDocument({ runJs: false });
+    setRunningState(false);
     return;
   }
 
+  elements.runtimeStatus.textContent = "Running JavaScript...";
   elements.previewFrame.srcdoc = buildWebPreviewDocument({ runJs: true });
+  setRunningState(false);
 }
 
 function resetCurrentLanguage() {
@@ -207,7 +266,12 @@ function resetCurrentLanguage() {
 
 function attachEvents() {
   elements.langButtons.forEach((button) => {
-    button.addEventListener("click", () => activateLanguage(button.dataset.lang));
+    button.addEventListener("click", () => {
+      activateLanguage(button.dataset.lang);
+      if (button.dataset.lang === "python") {
+        warmPythonRuntime();
+      }
+    });
   });
 
   elements.editor.addEventListener("input", () => {
@@ -222,6 +286,11 @@ function attachEvents() {
 function init() {
   attachEvents();
   activateLanguage("python");
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(() => warmPythonRuntime(), { timeout: 2500 });
+  } else {
+    setTimeout(() => warmPythonRuntime(), 1200);
+  }
 }
 
 init();

@@ -48,6 +48,12 @@ h1 {
   color: var(--ink);
 }
 
+.primary-btn:disabled,
+.ghost-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .lang-btn.is-active {
   background: var(--accent);
   color: #fff;

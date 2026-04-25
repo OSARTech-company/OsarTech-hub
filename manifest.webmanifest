@@ -1,0 +1,10 @@
+{
+  "name": "CodeWithCoach Lab",
+  "short_name": "Coach Lab",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#d85f3c",
+  "description": "A mobile-friendly coding practice lab for followers learning from WhatsApp lessons.",
+  "icons": []
+}

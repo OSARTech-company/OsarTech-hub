@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OsarTech Code Runner</title>
+  <meta name="theme-color" content="#1f5eff">
+  <meta name="description" content="Simple mobile code runner for Python, HTML, CSS, and JavaScript.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="runner">
+    <h1>Code Runner</h1>
+
+    <div class="language-switcher" role="tablist" aria-label="Language switcher">
+      <button class="lang-btn is-active" data-lang="python" role="tab" aria-selected="true">Python</button>
+      <button class="lang-btn" data-lang="html" role="tab" aria-selected="false">HTML</button>
+      <button class="lang-btn" data-lang="css" role="tab" aria-selected="false">CSS</button>
+      <button class="lang-btn" data-lang="javascript" role="tab" aria-selected="false">JavaScript</button>
+    </div>
+
+    <label class="editor-label" for="code-editor">Write code</label>
+    <textarea id="code-editor" class="code-editor" spellcheck="false"></textarea>
+
+    <div class="actions">
+      <button class="primary-btn" id="run-btn">Run</button>
+      <button class="ghost-btn" id="reset-btn">Reset</button>
+    </div>
+
+    <section class="panel" id="text-output-panel">
+      <div class="panel-head">
+        <h2>Output</h2>
+        <span id="runtime-status">Ready</span>
+      </div>
+      <pre id="text-output">Run code to see output here.</pre>
+    </section>
+
+    <section class="panel" id="preview-panel" hidden>
+      <div class="panel-head">
+        <h2>Preview</h2>
+      </div>
+      <iframe id="preview-frame" title="Code preview"></iframe>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

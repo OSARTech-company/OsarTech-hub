@@ -1,0 +1,150 @@
+:root {
+  --bg: #f3f6ff;
+  --surface: #ffffff;
+  --ink: #16203a;
+  --muted: #5a6a8e;
+  --line: #d7def0;
+  --accent: #1f5eff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, #eef2ff 0%, #f9fbff 60%, #eef7ff 100%);
+}
+
+.runner {
+  width: min(980px, calc(100% - 1rem));
+  margin: 0 auto;
+  padding: 1rem 0 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+}
+
+.language-switcher {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.lang-btn,
+.primary-btn,
+.ghost-btn {
+  border-radius: 999px;
+  padding: 0.75rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+}
+
+.lang-btn.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.editor-label {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.code-editor {
+  width: 100%;
+  min-height: 320px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.8rem 0;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.ghost-btn {
+  background: #fff;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.panel-head span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+#text-output {
+  margin: 0.65rem 0 0;
+  min-height: 150px;
+  white-space: pre-wrap;
+  background: #101624;
+  color: #e8eefc;
+  border-radius: 10px;
+  padding: 0.75rem;
+  border: 1px solid #222c43;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+#preview-frame {
+  width: 100%;
+  min-height: 360px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  margin-top: 0.65rem;
+}
+
+@media (max-width: 760px) {
+  .language-switcher {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .code-editor {
+    min-height: 260px;
+  }
+
+  #preview-frame {
+    min-height: 300px;
+  }
+}

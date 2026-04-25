@@ -1,0 +1,4 @@
+__pycache__/
+coachlab.db
+.env
+.env.*
